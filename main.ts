@@ -24,6 +24,12 @@ if (bytes.length < 33 || !bytes.subarray(0, 8).equals(PNG_SIGNATURE) || bytes.to
   throw new Error(`entry.png is not a valid PNG (got ${bytes.length} bytes, bad signature or missing IHDR)`);
 }
 
+const MAX_BYTES = 1024 * 1024;
+if (bytes.length > MAX_BYTES) {
+  throw new Error(`entry.png is ${bytes.length} bytes, over the 1 MiB limit`);
+}
+
 const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 mkdirSync(outDir, { recursive: true });
 writeFileSync(join(outDir, 'entry.png'), bytes);
+console.log(`wrote entry.png (${bytes.length} bytes)`);
